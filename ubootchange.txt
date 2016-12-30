@@ -1,0 +1,76 @@
+setenv bootcmd 'if test ${bootstatus} = 0;then setenv bootmode recovery; setenv mmcpart 1;else setenv bootmode system;setenv mmcpart 2;fi;setenv bootstatus 0;saveenv;run ramboot;' 
+setenv bootcmd_mfg  'run mfgtool_args; bootz ${loadaddr} ${initrd_addr} ${fdt_addr}; ' 
+setenv bootmode  'system' 
+setenv bootstatus 1 
+setenv ethport 'eth0'  
+setenv mmcboot 'echo Booting from mmc ${mmcdev}:${mmcpart} ...; mmc dev ${mmcdev};run mmcargs; run loadimage;if run loadfdt; then bootz ${loadaddr} - ${fdt_addr}; else echo WARN: Cannot boot from mmc; fi;'  
+setenv mmcpart 2 
+setenv mmcroot  '/dev/mmcblk3p3 rootwait rw'  
+setenv netmask '255.255.255.0'  
+setenv nfsroot '/home/jack/rootfs;'  
+
+setenv ramargs 'run set_disp; setenv bootargs console=${console},${baudrate} ${smp} root=${mmcroot} ${disp_args} mac=${ethaddr} rdinit=/sbin/init '  
+setenv ramboot  'echo Booting from mmc ${mmcdev}:${mmcpart} ...; mmc dev ${mmcdev};run ramargs;  run loadimage;if run loadfdt; then bootz ${loadaddr} - ${fdt_addr}; else echo WARN: Cannot boot from mmc; fi;'  
+setenv route '192.168.1.1'  
+setenv tftpboot  'echo Booting from tftp ...; run mmcargs; run set_net_cmd; ${get_cmd} ${loadaddr} ${image_file}; if ${get_cmd} ${fdt_addr} ${fdt_file}; then bootz ${loadaddr} - ${fdt_addr}; else echo WARN: Cannot boot from tftp; fi;'  
+
+
+setenv display   'video=mxcfb1:dev=hdmi,640x480M@60,if=RGB24 video=mxcfb0:dev=ldb,if=RGB24,bpp=16 ldb=sin0'
+
+
+
+baudrate=115200 
+bootcmd=if test ${bootstatus} = 0;then setenv bootmode recovery; setenv mmcpart 1;else setenv bootmode system;setenv mmcpart 2;fi;setenv bootstatus 0;saveenv;run ramboot; 
+bootcmd_mfg=run mfgtool_args; bootz ${loadaddr} ${initrd_addr} ${fdt_addr}; 
+bootdelay=1 
+bootmode=system 
+bootstatus=1 
+console=ttymxc0 
+display= 
+ethact=FEC 
+ethaddr=00:89:c0:a8:01:71 
+ethport=eth0 
+ethprime=FEC 
+fb0_hdmi=video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24 
+fb0_lcd=video=mxcfb0:dev=lcd,SEIKO-WVGA,if=RGB24 
+fb0_lvds0=video=mxcfb0:dev=ldb,if=RGB666 ldb=sin0 
+fb0_lvds1=video=mxcfb0:dev=ldb,if=RGB666 ldb=sin1 
+fb1_hdmi=video=mxcfb1:dev=hdmi,1920x1080M@60,if=RGB24 
+fb1_lcd=video=mxcfb1:dev=lcd,SEIKO-WVGA,if=RGB24 
+fb1_lvds0=video=mxcfb1:dev=ldb,if=RGB666 ldb=sin0 
+fb1_lvds1=video=mxcfb1:dev=ldb,if=RGB666 ldb=sin1 
+fdt_addr=0x18000000 
+fdt_file=mx6sxc9241.dtb 
+fdt_high=0xffffffff 
+image_file=zImage-mx6sxc9241 
+initrd_addr=0x12C00000 
+initrd_high=0xffffffff 
+ip_dyn=no 
+ipaddr=192.168.1.113 
+loadaddr=0x12000000 
+loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file} 
+loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image_file} 
+lvds_sync=video=mxcfb0:dev=ldb,if=RGB666 ldb=dul1 
+mfgtool_args=setenv bootargs console=ttymxc0,115200 rdinit=/linuxrc g_mass_storage.stall=0 g_mass_storage.removable=1 g_mass_storage.idVendor=0x066F g_mass_storage.idProduct=0x37FF g_mass_storage.iSerialNumber="" enable_wait_mode=off 
+mmcargs=run set_disp; setenv bootargs console=${console},${baudrate} ${smp} root=${mmcroot} ${disp_args} 
+mmcboot=echo Booting from mmc ${mmcdev}:${mmcpart} ...; mmc dev ${mmcdev};run mmcargs; run loadimage;if run loadfdt; then bootz ${loadaddr} - ${fdt_addr}; else echo WARN: Cannot boot from mmc; fi; 
+mmcdev=1 
+mmcpart=2 
+mmcroot=/dev/mmcblk3p3 rootwait rw 
+netargs=setenv bootargs console=${console},${baudrate} ${smp} root=/dev/nfs ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp rw 
+netboot=echo Booting from net ...; run netargs; run set_net_cmd; ${get_cmd} ${loadaddr} ${image_file}; if ${get_cmd} ${fdt_addr} ${fdt_file}; then bootz ${loadaddr} - ${fdt_addr}; else echo WARN: Cannot boot from net; fi; 
+netmask=255.255.255.0 
+nfsroot=/home/jack/rootfs; 
+ramargs=setenv bootargs console=${console},${baudrate} mac=${ethaddr} rdinit=/sbin/init 
+ramboot=echo Booting from mmc ${mmcdev}:${mmcpart} ...; mmc dev ${mmcdev};run ramargs; run loadimage;if run loadfdt; then bootz ${loadaddr} - ${fdt_addr}; else echo WARN: Cannot boot from mmc; fi; 
+route=192.168.1.1 
+serverip=192.168.1.244 
+set_disp=setenv disp_args ${display} 
+set_net_cmd=if test ${ip_dyn} = yes; then setenv get_cmd dhcp; else setenv get_cmd tftp; fi; 
+smp=nosmp 
+tftpboot=echo Booting from tftp ...; run mmcargs; run set_net_cmd; ${get_cmd} ${loadaddr} ${image_file}; if ${get_cmd} ${fdt_addr} ${fdt_file}; then bootz ${loadaddr} - ${fdt_addr}; else echo WARN: Cannot boot from tftp; fi; 
+uboot_file=uboot-mx6sxc9241.imx 
+update_fdt=run set_net_cmd; ${get_cmd} ${loadaddr} ${fdt_file}; fatwrite mmc ${mmcdev}:${mmcpart} ${loadaddr} ${fdt_file} 0x80000 
+update_kern=run set_net_cmd; ${get_cmd} ${loadaddr} ${image_file}; fatwrite mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image_file} 0x600000 
+update_uboot=if run set_net_cmd; then if ${get_cmd} ${loadaddr} ${uboot_file}; then sf probe 1; sf erase 0 0x200000; sf write ${loadaddr} 0x400 0x80000; fi; else echo FAIL: Update u-boot fail ...; fi; 
+
